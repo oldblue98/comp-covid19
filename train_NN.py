@@ -160,8 +160,6 @@ for fold, (trn_idx, val_idx) in enumerate(folds):
     best_val = 1000000.
     
     for _ in tqdm(range(epoch)):
-        if epoch % 10 == 0:
-            logger.debug(f'epoch:{_} started')
         start_time = time()
         train_loss = []
         val_loss = []
