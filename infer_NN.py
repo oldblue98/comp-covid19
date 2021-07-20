@@ -170,6 +170,9 @@ for fold, (trn_idx, val_idx) in enumerate(folds):
         out_dat.squeeze_(1)
         
         ans_this_cv.extend(out_dat.tolist())
+    assert len(ans_this_cv) == df_private.shape[0]
+    preds_NN_pri.append(ans_this_cv)
+
 
 logger.debug("finished infering")
 
