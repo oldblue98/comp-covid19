@@ -146,3 +146,7 @@ def main():
     df_public.to_feather("./output/X_pubric.feather")
     df_private.to_feather("./output/X_private.feather")
     y_train_all.to_feather("./output/y_train_all.feather")
+
+if __name__ == '__main__':
+    main()
+    
