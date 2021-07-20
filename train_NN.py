@@ -159,7 +159,7 @@ for fold, (trn_idx, val_idx) in enumerate(folds):
     scheduler = CosineAnnealingLR(optimizer, T_max=epoch, eta_min=1e-5)
     best_val = 1000000.
     
-    for _ in tqdm(range(epoch)):
+    for _ in range(epoch):
         start_time = time()
         train_loss = []
         val_loss = []

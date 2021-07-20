@@ -66,6 +66,13 @@ def main():
     cols = ["inf_Lags_{}".format(i) for i in range(Lags)] + ["death"]
 
     all_infection = pd.concat([train_infection.iloc[:, 1:], public_infection.iloc[:, 1:], private_infection.iloc[:, 1:]], axis=1)
+    # infectionを正規化
+    _ = all_infection.iloc[:, Days_later:].shape
+    tmp_infection = all_infection.iloc[:, Days_later:].to_numpy().reshape(-1, 1)
+    scaler = StandardScaler()
+    scaler.fit( tmp_infection )
+    tmp_infection = scaler.transform( tmp_infection )
+    all_infection.iloc[:, Days_later:] = tmp_infection.reshape(_)
 
     def make_dataset(id):
         # infectionデータ(1/22/20から404日分)のDays_later日目以降、をデータとして採用
@@ -128,7 +135,7 @@ def main():
     all_df['pos_circle_x_month'] = all_df["date"].dt.month.map(m_c)
     all_df['pos_circle_y_month'] = all_df["date"].dt.month.map(m_s)
 
-    to_normalize = ["inf_Lags_{}".format(i) for i in range(Lags)] + ["inf_avg{}".format(i) for i in range(7, 22, 7)] + ["inf_max{}".format(i) for i in range(7, 22, 7)] + ["Population", "month", "weekday", "days_from2020"]
+    to_normalize = ["Population", "month", "weekday", "days_from2020"]
     scaler = StandardScaler()
     scaler.fit( all_df[to_normalize] )
 
