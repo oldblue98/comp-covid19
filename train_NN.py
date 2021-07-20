@@ -134,7 +134,7 @@ preds_NN_pub = []
 preds_NN_pri = []
 
 for fold, (trn_idx, val_idx) in enumerate(folds):
-    logger.debug("fold{} start".format(fold))
+    logger.debug("fold:{} start".format(fold))
     # dataset 作成
     X_train = train.loc[trn_idx, :]
     X_valid = train.loc[val_idx, :]
@@ -158,6 +158,8 @@ for fold, (trn_idx, val_idx) in enumerate(folds):
     best_val = 1000000.
     
     for _ in range(epoch):
+        if epoch % 10 == 0:
+            logger.debug(f'epoch:{epoch} started')
         start_time = time()
         train_loss = []
         val_loss = []
@@ -207,7 +209,7 @@ for fold, (trn_idx, val_idx) in enumerate(folds):
                 loss = torch.sqrt(criterion(out_dat, out_ans))
                 val_loss.append(criterion(out_dat, out_ans).item())
         
-        print(f'## epoch {_+1}, {(time()-start_time)/60:.2f} min  train_loss: {math.sqrt(mean(train_loss)):.5f}, val_loss: {math.sqrt(mean(val_loss)):.5f}')
+        logger.debug(f'## epoch {_+1}, {(time()-start_time)/60:.2f} min  train_loss: {math.sqrt(mean(train_loss)):.5f}, val_loss: {math.sqrt(mean(val_loss)):.5f}')
        
         if best_val > math.sqrt(mean(val_loss)):
             best_val = math.sqrt(mean(val_loss))
