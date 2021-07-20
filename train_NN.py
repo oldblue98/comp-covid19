@@ -115,7 +115,6 @@ class RMSELoss(nn.Module):
     def forward(self,yhat,y):
         return torch.sqrt(self.mse(yhat,y))
 
-
 df_train = pd.read_feather("./output/train.feather")
 df_public = pd.read_feather("./output/X_pubric.feather")
 df_private = pd.read_feather("./output/X_private.feather")
@@ -186,7 +185,7 @@ for fold, (trn_idx, val_idx) in enumerate(folds):
             out_dat = model_me(inp)
             out_dat.squeeze_(1)
             
-            loss = torch.sqrt(criterion(out_dat, out_ans))
+            loss = criterion(out_dat, out_ans)
             loss.backward()
                 
             train_loss.append(criterion(out_dat, out_ans).item())
