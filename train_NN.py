@@ -8,6 +8,8 @@ import numpy as np
 import pandas as pd
 import os
 
+import math
+
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import mean_squared_error
 
@@ -39,7 +41,11 @@ class Config:
         }
         self.Debug = False
         
-CFG = Config()            
+CFG = Config()
+
+train_path = "./input/train"
+test_path = "./input/test"
+sub_path = "./input/submission"
 
 # モデル本体
 class NNModel(nn.Module):
@@ -91,8 +97,17 @@ class RMSELoss(nn.Module):
         return torch.sqrt(self.mse(yhat,y))
 
 
-device = "cuda:0" if torch.cuda.is_available() else "cpu"
-epoch = 1
+df_train = pd.read_feather("./output/train.feather")
+df_public = pd.read_feather("./output/X_pubric.feather")
+df_private = pd.read_feather("./output/X_private.feather")
+# 特徴量と目的変数に分離
+train = df_train.drop(["death", "date"], axis=1)
+y_train_all = df_train.death
+
+qcut_target = pd.qcut(y_train_all, CFG.q_splits, labels=False, duplicates='drop')
+
+device = "cuda:1" if torch.cuda.is_available() else "cpu"
+epoch = 300
 criterion = RMSELoss()
 folds = StratifiedKFold(n_splits=CFG.fold_num, shuffle=True, random_state=CFG.seed).split(np.arange(train.shape[0]), qcut_target)
 
@@ -207,3 +222,36 @@ for fold, (trn_idx, val_idx) in enumerate(folds):
     
     assert len(ans_this_cv) == df_private.shape[0]
     preds_NN_pri.append(ans_this_cv)
+
+preds_NN_pub = np.mean(preds_NN_pub, axis=0)
+preds_NN_pri = np.mean(preds_NN_pri, axis=0)
+
+sub_pub_NN = pd.read_csv(os.path.join(sub_path, "submission_public.csv"))
+sub_pri_NN = pd.read_csv(os.path.join(sub_path, "submission_private.csv"))
+
+# スマートな方法が思いつかなかったのでfor文です
+
+def public(x):
+    return preds_NN_pub[x.index]
+
+def private(x):
+    return preds_NN_pri[x.index]
+    
+tmp = df_public.groupby("id").apply(public)
+for i in range(len(tmp)):
+    sub_pub_NN.iloc[i, 1:] = tmp[i]
+    
+tmp = df_private.groupby("id").apply(private)
+for i in range(len(tmp)):
+    sub_pri_NN.iloc[i, 1:] = tmp[i]
+
+final_path = './output/'
+
+sub_pub_NN.to_csv(
+    final_path+"sub_pub_NN.csv",
+    index = False
+)
+sub_pri_NN.to_csv(
+    final_path+"sub_pri_NN.csv",
+    index = False
+)
