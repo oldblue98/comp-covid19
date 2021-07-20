@@ -66,7 +66,9 @@ def main():
     cols = ["inf_Lags_{}".format(i) for i in range(Lags)] + ["death"]
 
     all_infection = pd.concat([train_infection.iloc[:, 1:], public_infection.iloc[:, 1:], private_infection.iloc[:, 1:]], axis=1)
-    # infectionを正規化
+
+    # infectionを標準化
+    from sklearn.preprocessing import StandardScaler
     _ = all_infection.iloc[:, Days_later:].shape
     tmp_infection = all_infection.iloc[:, Days_later:].to_numpy().reshape(-1, 1)
     scaler = StandardScaler()
@@ -135,7 +137,7 @@ def main():
     all_df['pos_circle_x_month'] = all_df["date"].dt.month.map(m_c)
     all_df['pos_circle_y_month'] = all_df["date"].dt.month.map(m_s)
 
-    to_normalize = ["Population", "month", "weekday", "days_from2020"]
+    to_normalize = ["Population", "month", "weekday", "days_from2020", "id"]
     scaler = StandardScaler()
     scaler.fit( all_df[to_normalize] )
 
