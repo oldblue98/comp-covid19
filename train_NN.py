@@ -8,6 +8,8 @@ import numpy as np
 import pandas as pd
 import os
 
+from tqdm import tqdm
+
 import math
 
 from sklearn.model_selection import StratifiedKFold
@@ -157,7 +159,7 @@ for fold, (trn_idx, val_idx) in enumerate(folds):
     scheduler = CosineAnnealingLR(optimizer, T_max=epoch, eta_min=1e-5)
     best_val = 1000000.
     
-    for _ in range(epoch):
+    for _ in tqdm(range(epoch)):
         if epoch % 10 == 0:
             logger.debug(f'epoch:{_} started')
         start_time = time()
