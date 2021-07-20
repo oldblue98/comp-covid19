@@ -146,8 +146,8 @@ for fold, (trn_idx, val_idx) in enumerate(folds):
     train_dataset = Dataset(X_train, y_train)
     val_dataset = Dataset(X_valid, y_valid)
     
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size = 1024, shuffle = True, num_workers = 4, drop_last = True)
-    val_loader = torch.utils.data.DataLoader(val_dataset, batch_size = 1024, shuffle = False, 
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size = 50000, shuffle = True, num_workers = 4, drop_last = True)
+    val_loader = torch.utils.data.DataLoader(val_dataset, batch_size = 50000, shuffle = False, 
                                              num_workers = 4, drop_last = False)
     
     model_me = NNModel(num_features = X_train.shape[1], num_targets = 1, hidden_size = 128, dropout_rate = 0.1)
