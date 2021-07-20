@@ -28,7 +28,7 @@ handler1 = StreamHandler()
 handler1.setLevel(DEBUG)
 handler1.setFormatter(Formatter("%(asctime)s: %(message)s"))
 ## FileHandlerの設定
-config_filename = "create"
+config_filename = "infer_NN"
 handler2 = FileHandler(filename=f'./logs/{config_filename}.log')
 handler2.setLevel(DEBUG)
 handler2.setFormatter(Formatter("%(asctime)s: %(message)s"))
@@ -170,6 +170,8 @@ for fold, (trn_idx, val_idx) in enumerate(folds):
         out_dat.squeeze_(1)
         
         ans_this_cv.extend(out_dat.tolist())
+
+logger.debug("finished infering")
 
 sub_pub_NN = pd.read_csv(os.path.join(sub_path, "submission_public.csv"))
 sub_pri_NN = pd.read_csv(os.path.join(sub_path, "submission_private.csv"))
