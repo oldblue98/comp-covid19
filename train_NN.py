@@ -212,9 +212,9 @@ for fold, (trn_idx, val_idx) in enumerate(folds):
        
         if best_val > math.sqrt(mean(val_loss)):
             best_val = math.sqrt(mean(val_loss))
-            torch.save(model_me.state_dict(), 'best.pth')
+            torch.save(model_me.state_dict(), f'best_{fold}.pth')
                                  
-    model_me.load_state_dict(torch.load('best.pth'))
+    model_me.load_state_dict(torch.load(f'best_{fold}.pth'))
     
     test_set = Dataset(df_public.drop("date", axis=1), y_train)
     test_loader = torch.utils.data.DataLoader(test_set, batch_size = 64, shuffle = False, 
