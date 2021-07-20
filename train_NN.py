@@ -159,7 +159,7 @@ for fold, (trn_idx, val_idx) in enumerate(folds):
     
     for _ in range(epoch):
         if epoch % 10 == 0:
-            logger.debug(f'epoch:{epoch} started')
+            logger.debug(f'epoch:{_} started')
         start_time = time()
         train_loss = []
         val_loss = []
