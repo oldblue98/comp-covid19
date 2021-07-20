@@ -17,6 +17,23 @@ import pickle
 
 import warnings
 
+## loggerの設定
+from logging import debug, getLogger, StreamHandler, FileHandler, Formatter, DEBUG, INFO
+logger =getLogger("logger")
+logger.setLevel(DEBUG)
+## StreamHandlerの設定
+handler1 = StreamHandler()
+handler1.setLevel(DEBUG)
+handler1.setFormatter(Formatter("%(asctime)s: %(message)s"))
+## FileHandlerの設定
+config_filename = "create"
+handler2 = FileHandler(filename=f'./logs/{config_filename}.log')
+handler2.setLevel(DEBUG)
+handler2.setFormatter(Formatter("%(asctime)s: %(message)s"))
+#loggerに2つのハンドラを設定
+logger.addHandler(handler1)
+logger.addHandler(handler2)
+
 # 設定まとめ
 '''
 fold_num : kfoldの分割数
@@ -104,6 +121,8 @@ df_private = pd.read_feather("./output/X_private.feather")
 train = df_train.drop(["death", "date"], axis=1)
 y_train_all = df_train.death
 
+logger.debug("loaded dataset")
+
 qcut_target = pd.qcut(y_train_all, CFG.q_splits, labels=False, duplicates='drop')
 
 device = "cuda:1" if torch.cuda.is_available() else "cpu"
@@ -115,6 +134,7 @@ preds_NN_pub = []
 preds_NN_pri = []
 
 for fold, (trn_idx, val_idx) in enumerate(folds):
+    logger.debug("fold{} start".format(fold))
     # dataset 作成
     X_train = train.loc[trn_idx, :]
     X_valid = train.loc[val_idx, :]
