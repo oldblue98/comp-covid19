@@ -185,11 +185,11 @@ def private(x):
     return preds_NN_pri[x.index]
     
 tmp = df_public.groupby("id").apply(public)
-for i in range(len(tmp)):
+for i in df_public.id.unique():
     sub_pub_NN.iloc[i, 1:] = tmp[i]
     
 tmp = df_private.groupby("id").apply(private)
-for i in range(len(tmp)):
+for i in df_private.id.unique():
     sub_pri_NN.iloc[i, 1:] = tmp[i]
 
 final_path = './output/'
