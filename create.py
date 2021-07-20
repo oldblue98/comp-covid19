@@ -5,6 +5,23 @@ import math
 
 from sklearn.preprocessing import StandardScaler
 
+## loggerの設定
+from logging import debug, getLogger, StreamHandler, FileHandler, Formatter, DEBUG, INFO
+logger =getLogger("logger")
+logger.setLevel(DEBUG)
+## StreamHandlerの設定
+handler1 = StreamHandler()
+handler1.setLevel(DEBUG)
+handler1.setFormatter(Formatter("%(asctime)s: %(message)s"))
+## FileHandlerの設定
+config_filename = "create"
+handler2 = FileHandler(filename=f'./logs/{config_filename}.log')
+handler2.setLevel(DEBUG)
+handler2.setFormatter(Formatter("%(asctime)s: %(message)s"))
+#loggerに2つのハンドラを設定
+logger.addHandler(handler1)
+logger.addHandler(handler2)
+
 def main():
     train_path = "./input/train"
     test_path = "./input/test"
@@ -17,6 +34,8 @@ def main():
 
     city_info = pd.read_csv(os.path.join(train_path, "city_info.csv"))
     sample_submission = pd.read_csv(os.path.join(sub_path, "submission_public.csv"))
+
+    logger.debug("finished loading")
 
     # 実行に約90秒ほどかかります
 
@@ -79,6 +98,7 @@ def main():
 
     # データ生成
     all_df = concat_dataset()
+    logger.debug("finished concat_dataset")
 
     # Province_Stateをダミー変数化
     all_df = pd.concat([all_df, pd.get_dummies(all_df.pop("Province_State"))], axis=1)
@@ -125,3 +145,4 @@ def main():
     train.to_feather("./output/X_train.feather")
     df_public.to_feather("./output/X_pubric.feather")
     df_private.to_feather("./output/X_private.feather")
+    y_train_all.to_feather("./output/y_train_all.feather")
