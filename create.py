@@ -140,12 +140,9 @@ def main():
     df_private = all_df.loc[range(n_train+n_public, n_train+n_public+n_private)].drop("death", axis=1).reset_index(drop=True)
 
     # 特徴量と目的変数に分離
-    train = df_train.drop(["death", "date"], axis=1)
-    y_train_all = df_train.death
-    train.to_feather("./output/X_train.feather")
+    df_train.to_feather("./output/train.feather")
     df_public.to_feather("./output/X_pubric.feather")
     df_private.to_feather("./output/X_private.feather")
-    y_train_all.to_feather("./output/y_train_all.feather")
 
 if __name__ == '__main__':
     main()
