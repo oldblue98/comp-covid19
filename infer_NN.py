@@ -173,6 +173,9 @@ for fold, (trn_idx, val_idx) in enumerate(folds):
 
 logger.debug("finished infering")
 
+preds_NN_pub = np.mean(preds_NN_pub, axis=0)
+preds_NN_pri = np.mean(preds_NN_pri, axis=0)
+
 sub_pub_NN = pd.read_csv(os.path.join(sub_path, "submission_public.csv"))
 sub_pri_NN = pd.read_csv(os.path.join(sub_path, "submission_private.csv"))
 
@@ -185,11 +188,11 @@ def private(x):
     return preds_NN_pri[x.index]
     
 tmp = df_public.groupby("id").apply(public)
-for i in df_public.id.unique():
+for i in range(len(tmp)):
     sub_pub_NN.iloc[i, 1:] = tmp[i]
     
 tmp = df_private.groupby("id").apply(private)
-for i in df_private.id.unique():
+for i in range(len(tmp)):
     sub_pri_NN.iloc[i, 1:] = tmp[i]
 
 final_path = './output/'
