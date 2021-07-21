@@ -28,7 +28,7 @@ handler1 = StreamHandler()
 handler1.setLevel(DEBUG)
 handler1.setFormatter(Formatter("%(asctime)s: %(message)s"))
 ## FileHandlerの設定
-config_filename = "create"
+config_filename = "train_NN"
 handler2 = FileHandler(filename=f'./logs/{config_filename}.log')
 handler2.setLevel(DEBUG)
 handler2.setFormatter(Formatter("%(asctime)s: %(message)s"))
@@ -127,7 +127,7 @@ logger.debug("loaded dataset")
 qcut_target = pd.qcut(y_train_all, CFG.q_splits, labels=False, duplicates='drop')
 
 device = "cuda:1" if torch.cuda.is_available() else "cpu"
-epoch = 100
+epoch = 50
 criterion = RMSELoss()
 folds = StratifiedKFold(n_splits=CFG.fold_num, shuffle=True, random_state=CFG.seed).split(np.arange(train.shape[0]), qcut_target)
 
@@ -145,9 +145,8 @@ for fold, (trn_idx, val_idx) in enumerate(folds):
     train_dataset = Dataset(X_train, y_train)
     val_dataset = Dataset(X_valid, y_valid)
     
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size = 4096, shuffle = True, num_workers = 4, drop_last = True)
-    val_loader = torch.utils.data.DataLoader(val_dataset, batch_size = 4096, shuffle = False, 
-                                             num_workers = 4, drop_last = False)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size = 2048, shuffle = True, num_workers = 4, drop_last = True)
+    val_loader = torch.utils.data.DataLoader(val_dataset, batch_size = 2048, shuffle = False, num_workers = 4, drop_last = False)
     
     model_me = NNModel(num_features = X_train.shape[1], num_targets = 1, hidden_size = 128, dropout_rate = 0.1)
     model_me = model_me.to(device)
