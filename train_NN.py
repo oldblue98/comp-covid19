@@ -128,7 +128,7 @@ qcut_target = pd.qcut(y_train_all, CFG.q_splits, labels=False, duplicates='drop'
 
 device = "cuda:1" if torch.cuda.is_available() else "cpu"
 epoch = 50
-criterion = RMSELoss()
+criterion = nn.MSELoss()
 folds = StratifiedKFold(n_splits=CFG.fold_num, shuffle=True, random_state=CFG.seed).split(np.arange(train.shape[0]), qcut_target)
 
 preds_NN_pub = []
